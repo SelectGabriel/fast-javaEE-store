@@ -1,0 +1,149 @@
+/*preeencher statuses*/
+/*preeencher produtos*/
+/*preencher pessoas*/
+/*preencher pedidos*/
+
+CREATE TABLE IF NOT EXISTS tb_pessoa(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    cpf character(11) UNIQUE NOT NULL,    
+    nome character varying(100) NOT NULL,
+    email character varying(100) UNIQUE NOT NULL,
+    endereco character varying(500) NOT NULL,
+    telefone character varying(11) NOT NULL,
+    senha character varying(512) NOT NULL,
+    role character varying(30) NOT NULL,
+    
+    CONSTRAINT pk_pessoa PRIMARY KEY (id)
+);
+
+/*--------------------------------------------------------------------------------------------*/
+
+CREATE TABLE IF NOT EXISTS tb_produto(
+   id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+   nome character varying(100) NOT NULL,
+   preco integer NOT NULL,
+   prazo integer NOT NULL,
+   ativo boolean NOT NULL DEFAULT TRUE,
+
+   constraint pk_produto primary key (id)
+);
+
+/*--------------------------------------------------------------------------------------------*/
+
+CREATE TABLE IF NOT EXISTS tb_status(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    nome character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    descricao character varying(500) COLLATE pg_catalog."default" NOT NULL,
+
+    constraint pk_status primary key (id)
+);
+
+/*--------------------------------------------------------------------------------------------*/
+
+CREATE TABLE IF NOT EXISTS tb_pedido(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    numero character varying(200)UNIQUE NOT NULL,
+    pessoa integer NOT NULL,
+    valor integer NOT NULL,
+    prazo integer NOT NULL,
+    status integer NOT NULL,
+    dthrcriacao timestamp NOT NULL,
+    dthrpagamento timestamp,
+
+    constraint pk_pedido primary key (id),
+    CONSTRAINT fk_pessoa FOREIGN KEY (pessoa) REFERENCES tb_pessoa (id),
+    CONSTRAINT fk_status FOREIGN KEY (status) REFERENCES tb_status (id)
+);
+
+/*--------------------------------------------------------------------------------------------*/
+
+CREATE TABLE IF NOT EXISTS tb_pedidoProduto(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    pedido integer NOT NULL,
+    produto integer NOT NULL,
+    valor integer NOT NULL,
+    prazo integer NOT NULL,
+    quantidade integer NOT NULL,
+
+    constraint pk_pedidoProduto primary key (id),
+    CONSTRAINT fk_pedido FOREIGN KEY (pedido) REFERENCES tb_pedido (id),
+    CONSTRAINT fk_produto FOREIGN KEY (produto) REFERENCES tb_produto (id)
+);
+
+INSERT INTO tb_status (nome, descricao) VALUES ('EM ABERTO', 'Novos pedidos'); /*1*/
+INSERT INTO tb_status (nome, descricao) VALUES ('REJEITADO', 'Novos pedido rejeitado'); /*2*/
+INSERT INTO tb_status (nome, descricao) VALUES ('CANCELADO', 'Pedido cancelado'); /*3*/
+INSERT INTO tb_status (nome, descricao) VALUES ('RECOLHIDO', 'Pedido recolhido/em lavagem'); /*4*/
+INSERT INTO tb_status (nome, descricao) VALUES ('AGUARDANDO PAGAMENTO', 'Pedido Lavado. Aguardando Pagamento'); /*5*/
+INSERT INTO tb_status (nome, descricao) VALUES ('PAGO', 'Pedido pago. Aguardando Baixa'); /*6*/
+INSERT INTO tb_status (nome, descricao) VALUES ('FINALIZADO', 'Pedido finalizado'); /*7*/
+
+INSERT INTO tb_pessoa (cpf, nome, email, endereco, telefone, senha, role) VALUES ('06364350089', 'Maria', 'maria@lol.com.br', 'Rua da Maria, 85, 83050201 - Curitiba', '41991999919', '94aec9fbed989ece189a7e172c9cf41669050495152bc4c1dbf2a38d7fd85627', 'funcionario');
+INSERT INTO tb_pessoa (cpf, nome, email, endereco, telefone, senha, role) VALUES ('49613432000', 'Mário', 'mario@lol.com.br', 'Rua do Mario, 84, 83050202 - Curitiba', '41991999918', '59195c6c541c8307f1da2d1e768d6f2280c984df217ad5f4c64c3542b04111a4', 'funcionario');
+
+INSERT INTO tb_pessoa (cpf, nome, email, endereco, telefone, senha, role) VALUES ('66617818075', 'João', 'joao@cliente.com.br', 'Rua do João, 83, 83050203 - Curitiba', '41991999917', 'ed2befb11499489e2570cb053f774b8ed93e89eddab3f78867a2a5f32c58845e', 'cliente');
+INSERT INTO tb_pessoa (cpf, nome, email, endereco, telefone, senha, role) VALUES ('78300299033', 'José', 'jose@cliente.com.br', 'Rua do José, 82, 83050204 - Curitiba', '41991999916', '1ec4ed037766aa181d8840ad04b9fc6e195fd37dedc04c98a5767a67d3758ece', 'cliente');
+INSERT INTO tb_pessoa (cpf, nome, email, endereco, telefone, senha, role) VALUES ('03145918001', 'Joana', 'joana@cliente.com.br', 'Rua da Joana, 81, 83050205 - Curitiba', '41991999915', '3c6efb268bde2923e4f7cbc086995f6158a606e66df45e307829e6b28f7aaf0e', 'cliente');
+
+INSERT INTO tb_produto (nome, preco, prazo) VALUES ('Calça', 500, 2); /*1*/
+INSERT INTO tb_produto (nome, preco, prazo) VALUES ('Camisa', 500, 1); /*2*/
+INSERT INTO tb_produto (nome, preco, prazo) VALUES ('Camiseta', 400, 1); /*3*/
+INSERT INTO tb_produto (nome, preco, prazo) VALUES ('Meia', 250, 1); /*4*/
+INSERT INTO tb_produto (nome, preco, prazo) VALUES ('Cueca', 250, 1); /*5*/
+INSERT INTO tb_produto (nome, preco, prazo) VALUES ('Jaqueta', 1000, 4); /*6*/
+
+/*Pedidos do João*/
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230204232904777', 3, 2000, 2, 1, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (1, 1, 500, 2, 2);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (1, 2, 500, 1, 2);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230204232905685', 3, 2000, 1, 1, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (2, 3, 400, 1, 5);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230204232906362', 3, 3000, 1, 2, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (3, 4, 250, 1, 8);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (3, 5, 250, 1, 4);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230204232907000', 3, 3750, 4, 3, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (4, 6, 1000, 4, 1);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (4, 5, 250, 1, 1);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (4, 1, 500, 2, 3);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (4, 2, 500, 2, 2);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230204232908360', 3, 1750, 2, 4, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (5, 2, 500, 2, 2);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (5, 4, 250, 1, 3);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao, dthrpagamento) VALUES ('20230204232909000', 1, 1600, 1, 7, now(), now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (6, 3, 400, 1, 4);
+
+/*Pedidos do José*/
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230212232904777', 4, 2000, 2, 1, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (7, 1, 500, 2, 2);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (7, 2, 500, 1, 2);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230212232905685', 4, 2000, 1, 5, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (8, 3, 400, 1, 5);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao, dthrpagamento) VALUES ('20230211832906362', 4, 3000, 1, 6, now(), now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (9, 4, 250, 1, 8);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (9, 5, 250, 1, 4);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao, dthrpagamento) VALUES ('20230229932907000', 4, 3750, 4, 7, now(), now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (10, 6, 1000, 4, 1);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (10, 5, 250, 1, 1);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (10, 1, 500, 2, 3);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (10, 2, 500, 2, 2);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao, dthrpagamento) VALUES ('20230129432908360', 4, 1750, 2, 7, now(), now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (11, 2, 500, 2, 2);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (11, 4, 250, 1, 3);
+
+/*Pedidos do Joana*/
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230212231904777', 5, 2000, 2, 5, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (12, 1, 500, 2, 2);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (12, 2, 500, 1, 2);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230212232905785', 5, 2000, 1, 5, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (13, 3, 400, 1, 5);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao) VALUES ('20230211233906262', 5, 3000, 1, 4, now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (14, 4, 250, 1, 8);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (14, 5, 250, 1, 4);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao, dthrpagamento) VALUES ('20230229234907000', 3, 3750, 4, 6, now(), now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (15, 6, 1000, 4, 1);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (15, 5, 250, 1, 1);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (15, 1, 500, 2, 3);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (15, 2, 500, 2, 2);
+INSERT INTO tb_pedido (numero, pessoa, valor, prazo, status, dthrcriacao, dthrpagamento) VALUES ('20230129238908360', 3, 1750, 2, 7, now(), now());
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (16, 2, 500, 2, 2);
+INSERT INTO tb_pedidoProduto (pedido, produto, valor, prazo, quantidade) VALUES (16, 4, 250, 1, 3);

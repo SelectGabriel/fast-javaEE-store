@@ -1,0 +1,101 @@
+body{
+  background-color: #f6f7fc;
+  font-family: "Roboto", sans-serif;
+}
+
+.a, .p {
+    font-family: "Roboto", sans-serif;
+  
+}
+.navbar{
+  box-shadow: 1px 1px 10px  #b3b3b3;;
+  background-color: white;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    padding-right: 30px;
+    color: #16c2e0;
+}
+
+.nav-link{
+    color: black;
+}
+
+.nav-link disabled{
+    color: #b3b3b3;
+}
+
+.container {
+    background-color: white;
+    padding: 20px 30px 30px 30px;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #b3b3b3;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -16px;
+}
+
+.col-25 {
+  flex: 25%;  
+}
+
+.col-50 {
+  flex: 50%;
+}
+
+.col-75 {
+  flex: 75%;
+}
+
+.col-25,
+.col-50,
+.col-75 {
+  padding: 10px 16px;
+}
+
+span.price {
+  float: right;
+  color: grey;
+}
+
+.badge {
+    font-size: 14px;
+    color: black;
+}
+
+.clicavel{
+  cursor:pointer;
+}
+
+.clicavel:hover{
+  text-decoration: underline;
+  color: red;
+}
+
+.EMABERTO{
+    --bs-table-bg:blue;
+}
+
+.table-hovera {
+
+  --bs-table-bg: rgba(246, 186, 172, 0.84);
+  --bs-table-accent-bg: rgba(246, 186, 172, 0.84);
+  --bs-table-striped-color: #212529;
+  --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+  --bs-table-active-color: #212529;
+  --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+  --bs-table-hover-color: #212529;
+  --bs-table-hover-bg: rgba(246, 157, 137, 0.84);
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  vertical-align: top;
+  border-color: #dee2e6;
+}

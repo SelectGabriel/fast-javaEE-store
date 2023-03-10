@@ -1,0 +1,30 @@
+version: '3'
+services:
+  db:
+    image: "postgres:14"
+    restart: always
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+    env_file:
+      - database.env
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    networks:
+      - localnet
+
+  adminer:
+    image: "adminer"
+    restart: always
+    ports:
+      - "8082:8080"
+    networks:
+      - localnet
+
+volumes:
+  database-data:
+
+networks: 
+  localnet:
+    external: false
